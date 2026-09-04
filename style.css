@@ -1,0 +1,55 @@
+:root {
+  --bg-color: #0d0e12;
+  --text-color: #f3f4f6;
+  --accent-color: #7c3aed;
+  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+}
+
+.content {
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+code {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}

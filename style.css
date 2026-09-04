@@ -445,6 +445,9 @@ body.presskit {
 /* Sections */
 .pk-section { scroll-margin-top: 5rem; }
 
+/* The shows script hides an emptied Upcoming section via the hidden property. */
+[hidden] { display: none !important; }
+
 .pk-heading {
   display: flex;
   align-items: center;

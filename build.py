@@ -20,9 +20,11 @@ A section left with no real content after stripping TODOs is omitted from the
 page entirely, and reappears on its own once real content is added.
 """
 
+import calendar
 import html
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -169,12 +171,59 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
+MONTHS = {m.lower(): i for i, m in enumerate(calendar.month_abbr) if m}
+
+
+def parse_when(text):
+    """Parse a show date to the last moment it still counts as upcoming.
+
+    Returns a date, or None when the text is not a single parseable date
+    (a range like "2022-23", say). None means past: only something clearly
+    in the future should be allowed to claim it is upcoming.
+    """
+    s = text.strip()
+    m = re.match(r"^(\d{1,2})\s+([A-Za-z]{3,})\.?\s+(\d{4})$", s)
+    if m:
+        mon = MONTHS.get(m.group(2)[:3].lower())
+        if mon:
+            try:
+                return date(int(m.group(3)), mon, int(m.group(1)))
+            except ValueError:
+                return None
+    m = re.match(r"^([A-Za-z]{3,})\.?\s+(\d{4})$", s)
+    if m:
+        mon = MONTHS.get(m.group(1)[:3].lower())
+        if mon:
+            # Month precision: still upcoming until the whole month has gone.
+            y = int(m.group(2))
+            return date(y, mon, calendar.monthrange(y, mon)[1])
+    return None
+
+
+def split_shows(entries, today):
+    """Split rows into (upcoming, past), each sorted and tagged with an ISO date.
+
+    Upcoming runs soonest-first, past runs most-recent-first. Rows with no
+    parseable date sort to the bottom of the past list, keeping source order.
+    """
+    tagged = []
+    for when, venue, city in entries:
+        d = parse_when(when)
+        tagged.append((when, venue, city, d.isoformat() if d else "", d))
+    upcoming = [t for t in tagged if t[4] and t[4] >= today]
+    past = [t for t in tagged if not (t[4] and t[4] >= today)]
+    upcoming.sort(key=lambda t: t[4])
+    past.sort(key=lambda t: t[4] or date.min, reverse=True)
+    return ([t[:4] for t in upcoming], [t[:4] for t in past])
+
+
 def shows_html(entries):
     """Render a date/venue/city list. Shared by Upcoming and Selected shows."""
     out = '      <ul class="pk-shows">\n'
-    for when, venue, city in entries:
+    for when, venue, city, iso in entries:
+        attr = f' data-date="{iso}"' if iso else ""
         out += (
-            "        <li>"
+            f"        <li{attr}>"
             f'<span class="pk-show-year">{e(when)}</span>'
             f'<span class="pk-show-venue">{e(venue)}</span>'
             f'<span class="pk-show-city">{e(city)}</span></li>\n'
@@ -201,8 +250,7 @@ def render(doc):
     bio_short = paragraphs(doc.get("Bio short", []))
     bio_full = paragraphs(doc.get("Bio full", []))
     video = content_lines(doc.get("Live video", []))
-    upcoming = rows(doc.get("Upcoming", []), 3)
-    shows = rows(doc.get("Selected shows", []), 3)
+    upcoming, shows = split_shows(rows(doc.get("Shows", []), 3), date.today())
     rider = subsections(doc.get("Tech rider", []))
     photos = rows(doc.get("Press photos", []), 2)
 
@@ -422,11 +470,66 @@ def render(doc):
     <p>&copy; 2026 {e(name)}. All rights reserved.</p>
     <p><a href="index.html">Back to site</a></p>
   </footer>
-</body>
+""" + SCRIPT + """</body>
 </html>
 """)
 
     return "".join(out), rendered, skipped
+
+
+SCRIPT = """  <script>
+  /* Shows are split into upcoming and past at build time, which is correct on
+     the day of the deploy. This re-checks in the browser so the page stays
+     right on every later visit without needing a rebuild. Progressive
+     enhancement: with the script blocked, the build-time split still stands. */
+  (function () {
+    var upSec = document.getElementById('upcoming');
+    if (!upSec) return;
+    var upList = upSec.querySelector('.pk-shows');
+    if (!upList) return;
+    var pastSec = document.getElementById('shows');
+    var pastList = pastSec ? pastSec.querySelector('.pk-shows') : null;
+
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    var stale = [];
+    Array.prototype.forEach.call(upList.children, function (li) {
+      var iso = li.getAttribute('data-date');
+      if (!iso) return;
+      var p = iso.split('-');
+      if (new Date(+p[0], +p[1] - 1, +p[2]) < today) stale.push(li);
+    });
+
+    if (stale.length && pastList) {
+      stale.forEach(function (li) { pastList.appendChild(li); });
+      var items = Array.prototype.slice.call(pastList.children);
+      items.sort(function (a, b) {
+        var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
+        if (!da && !db) return 0;
+        if (!da) return 1;
+        if (!db) return -1;
+        return db.localeCompare(da);
+      });
+      items.forEach(function (li) { pastList.appendChild(li); });
+    }
+
+    if (!upList.children.length) upSec.hidden = true;
+
+    /* Section numbers are baked in at build time, so renumber whatever is
+       still visible rather than leaving a gap where Upcoming used to be. */
+    var n = 0;
+    Array.prototype.forEach.call(
+      document.querySelectorAll('.pk-section'), function (sec) {
+        if (sec.hidden) return;
+        var num = sec.querySelector('.pk-num');
+        if (!num) return;
+        n += 1;
+        num.textContent = n < 10 ? '0' + n : String(n);
+      });
+  })();
+  </script>
+"""
 
 
 def main():

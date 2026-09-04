@@ -69,17 +69,19 @@ Recent output includes the mixset "smile when you dance" and the track
 <!-- Paste any YouTube or Vimeo URL; the build converts it to an embed. -->
 https://www.youtube.com/watch?v=kEO8XYp0HsI
 
-## Upcoming
-<!-- date | venue | city — one per line. Use a specific day once confirmed:
-     an upcoming show with only a month reads as tentative rather than booked. -->
-<!-- After the show, move this row down into Selected shows as "Sep 2026".
-     An Upcoming section holding a date that has passed is worse than no
-     Upcoming section at all. -->
-05 Sep 2026 | Zum Genossen | Berlin
+## Shows
+<!-- date | venue | city — one per line, in any order.
 
-## Selected shows
-<!-- date | venue | city — one per line, most recent first.
-     A run of editions can be one row (Antenazo I-V) rather than five. -->
+     build.py decides which of these are upcoming by comparing the date to the
+     build date, and sorts each group. Add a show once; you never have to move
+     it afterwards.
+
+     Date formats:
+       05 Sep 2026   exact day    — upcoming until that day has passed
+       Aug 2026      month only   — upcoming until the month has ended
+       2022-23       free text    — always treated as past
+-->
+05 Sep 2026 | Zum Genossen | Berlin
 Aug 2026 | Club AMT | Berlin
 Jul 2026 | Zum Genossen | Berlin
 May 2026 | Trude Ruth und Goldammer | Berlin

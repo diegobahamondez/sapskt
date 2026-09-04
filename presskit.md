@@ -16,8 +16,8 @@
 ## Meta
 name: SAPSKT
 tagline: DJ & Music Producer
-hook: Chilean-born, Berlin-based. Dark, groovy techno and the dirtiest reggaeton you can imagine.
-genres: Techno, Reggaeton
+hook: Dark groove techno from Berlin, by way of Chile. Low-slung, hypnotic, built for the long hours rather than the peaks.
+genres: Dark Groove Techno
 city: Berlin, Germany
 origin: Chile
 booking_email: diego.bahamondezm@gmail.com
@@ -37,20 +37,24 @@ Fake Dichotomy | 2319999095 | Track | compact
 
 ## Bio short
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
-SAPSKT is a Chilean DJ and producer based in Berlin. He plays dark, groovy techno
-and the dirtiest reggaeton you can imagine, and treats the gap between the two as
-much smaller than most people assume. He works on both digital and vinyl, which
-means he adapts to the room rather than to the booth.
+SAPSKT is a Chilean DJ and producer based in Berlin, working primarily in dark
+groove techno: low-slung, hypnotic, and built for the long stretches of a night
+rather than its obvious peaks. He also plays reggaeton at its dirtiest, and treats
+the distance between the two as smaller than most people assume. He works on both
+digital and vinyl, adapting to the room rather than to the booth.
 
 ## Bio full
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
 SAPSKT is a DJ and producer from Chile, now based in Berlin.
 
-His sets resist an easy category. On one side, dark and groovy techno built for
-long hours in low-lit rooms. On the other, reggaeton at its most physical and
-least polite. Rather than keeping those two modes in separate nights, he treats
-the distance between them as the interesting part of the job — a position his
-track "Fake Dichotomy" names outright.
+His main curation is dark groove techno: low-slung, hypnotic and physical, built
+for the long stretches of a night rather than its obvious peaks. It is music that
+rewards patience, where the groove shifts slowly enough that you notice the room
+changing before you notice the record has.
+
+He also plays reggaeton, at its most physical and least polite, and treats the
+distance between the two as smaller than most people assume — a position his track
+"Fake Dichotomy" names outright.
 
 He plays both digital and vinyl, moving between Pioneer setups and Technics or
 Reloop turntables, and is comfortable on whatever mixer the booth happens to have.

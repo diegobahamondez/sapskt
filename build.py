@@ -156,10 +156,13 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
-def section(sid, heading, body):
+def section(sid, heading, body, num):
+    """Render one section. `num` is its position among the sections that were
+    actually rendered, so hiding an empty section does not leave a gap in the
+    numbering."""
     return (
         f'    <section class="pk-section" id="{sid}">\n'
-        f'      <h2 class="pk-heading">{e(heading)}</h2>\n'
+        f'      <h2 class="pk-heading"><span class="pk-num">{num:02d}</span> {e(heading)}</h2>\n'
         f"{body}"
         f"    </section>\n"
     )
@@ -186,6 +189,12 @@ def render(doc):
     rendered, skipped = [], []
     out = []
 
+    counter = {"n": 0}
+
+    def emit(sid, heading, body):
+        counter["n"] += 1
+        return section(sid, heading, body, counter["n"])
+
     # -- head -------------------------------------------------------------
     out.append(f"""<!DOCTYPE html>
 <html lang="en">
@@ -200,7 +209,7 @@ def render(doc):
   <meta property="og:image" content="assets/profile.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="presskit">
@@ -245,7 +254,7 @@ def render(doc):
 
     # -- listen -----------------------------------------------------------
     if music:
-        colors = ["a855f7", "ec4899"]
+        colors = ["ff3b00"]
         body = ""
         for i, (title, tid, label, style) in enumerate(music):
             visual = "true" if style.lower() == "visual" else "false"
@@ -264,7 +273,7 @@ def render(doc):
         </div>
       </article>
 """
-        out.append(section("listen", "Listen", body))
+        out.append(emit("listen", "Listen", body))
         rendered.append("listen")
     else:
         skipped.append("listen")
@@ -282,7 +291,7 @@ def render(doc):
                 "        </div>\n"
                 "      </details>\n"
             )
-        out.append(section("bio", "Biography", body))
+        out.append(emit("bio", "Biography", body))
         rendered.append("bio")
     else:
         skipped.append("bio")
@@ -296,7 +305,7 @@ def render(doc):
           allowfullscreen frameborder="no"></iframe>
       </div>
 """
-        out.append(section("live", "Live", body))
+        out.append(emit("live", "Live", body))
         rendered.append("live")
     else:
         skipped.append("live")
@@ -312,7 +321,7 @@ def render(doc):
                 f'<span class="pk-show-city">{e(city)}</span></li>\n'
             )
         body += "      </ul>\n"
-        out.append(section("shows", "Selected shows", body))
+        out.append(emit("shows", "Selected shows", body))
         rendered.append("shows")
     else:
         skipped.append("shows")
@@ -333,7 +342,7 @@ def render(doc):
                 f'      <p class="pk-note">Photos by {e(credit)}. '
                 "Please credit on all published material. Click any image to download.</p>\n"
             )
-        out.append(section("photos", "Press photos", body))
+        out.append(emit("photos", "Press photos", body))
         rendered.append("photos")
     else:
         skipped.append("photos")
@@ -350,7 +359,7 @@ def render(doc):
         </div>
 """
         body += "      </div>\n"
-        out.append(section("rider", "Tech rider", body))
+        out.append(emit("rider", "Tech rider", body))
         rendered.append("rider")
     else:
         skipped.append("rider")
@@ -369,7 +378,7 @@ def render(doc):
 {links}        </ul>
       </div>
 """
-    out.append(section("booking", "Booking", body))
+    out.append(emit("booking", "Booking", body))
     rendered.append("booking")
 
     out.append(f"""  </main>

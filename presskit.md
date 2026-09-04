@@ -21,7 +21,8 @@ genres: Dark Groove Techno
 city: Berlin, Germany
 origin: Chile
 booking_email: diego.bahamondezm@gmail.com
-photo_credit: Manuela Selmann
+photo_credit: Manuela Selman
+photo_credit_instagram: lafrau.s
 
 ## Socials
 <!-- name: url  — verify the Resident Advisor URL, it could not be checked automatically -->

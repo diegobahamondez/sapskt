@@ -29,6 +29,19 @@ ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "presskit.md"
 OUTPUT = ROOT / "presskit.html"
 
+# Instagram glyph, inlined so it needs no network request and inherits the
+# surrounding text colour via currentColor.
+IG_ICON = (
+    '<svg class="ig-icon" viewBox="0 0 24 24" width="1em" height="1em" fill="none" '
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" '
+    'stroke-linejoin="round" aria-hidden="true" focusable="false">'
+    '<rect x="2" y="2" width="20" height="20" rx="5.5"/>'
+    '<circle cx="12" cy="12" r="4.4"/>'
+    '<circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/>'
+    "</svg>"
+)
+
+
 WIDGET = (
     "https://w.soundcloud.com/player/?url=https%3A%2F%2Fapi.soundcloud.com"
     "%2Ftracks%2F{tid}&color=%23{color}&visual={visual}&show_artwork=true"
@@ -338,9 +351,18 @@ def render(doc):
 """
         body += "      </div>\n"
         credit = meta.get("photo_credit", "")
+        handle = meta.get("photo_credit_instagram", "").lstrip("@")
         if credit:
+            if handle:
+                who = (
+                    f"{e(credit)} "
+                    f'(<a class="pk-credit" href="https://instagram.com/{e(handle)}" '
+                    f'target="_blank" rel="noopener">{IG_ICON}@{e(handle)}</a>)'
+                )
+            else:
+                who = e(credit)
             body += (
-                f'      <p class="pk-note">Photos by {e(credit)}. '
+                f'      <p class="pk-note">Photos by {who}. '
                 "Please credit on all published material. Click any image to download.</p>\n"
             )
         out.append(emit("photos", "Press photos", body))

@@ -703,6 +703,21 @@ body.presskit {
   .pk-show-city { grid-column: 2; }
 }
 
+.pk-credit {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.pk-credit:hover { color: var(--signal); border-color: var(--signal); }
+
+.ig-icon {
+  vertical-align: -0.14em;
+  margin-right: 0.32em;
+}
+
 /* --------------------------------------------------------------------------
    Portrait crop
    profile.jpeg is landscape 3:2 but is shown in square frames (homepage hero,
@@ -755,5 +770,7 @@ img[src$="profile.jpeg"] {
 
   .pk-rider-block li::before { background: #000; }
   .pk-photo img { filter: grayscale(1); }
-  .pk-links a::after { content: ' (' attr(href) ')'; font-size: 0.68rem; }
+  .pk-links a::after,
+  .pk-credit::after { content: ' (' attr(href) ')'; font-size: 0.68rem; }
+  .ig-icon { display: none; }
 }

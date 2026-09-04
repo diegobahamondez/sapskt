@@ -70,6 +70,11 @@ Recent output includes the mixset "smile when you dance" and the track
 <!-- Paste any YouTube or Vimeo URL; the build converts it to an embed. -->
 https://www.youtube.com/watch?v=kEO8XYp0HsI
 
+## Live video [reggaeton]
+<!-- No reggaeton set on video yet. A section whose only content is TODO is
+     omitted, so this reappears by itself once a link is added here. -->
+TODO: add a reggaeton set video when there is one
+
 ## Shows
 <!-- date | venue | city — one per line, in any order.
 

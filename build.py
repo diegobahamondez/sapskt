@@ -216,6 +216,7 @@ def render(doc):
   <div class="bg-overlay"></div>
 
   <div class="pk-bar">
+    <a class="pk-bar-back" href="index.html">&#8592; Site</a>
     <a class="pk-bar-name" href="index.html">{e(name)}</a>
     <span class="pk-bar-meta">{e(barmeta)}</span>
     <a class="pk-bar-cta" href="mailto:{e(email)}">Book</a>

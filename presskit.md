@@ -95,6 +95,6 @@ TODO
 ## Press photos
 <!-- file | caption -->
 assets/profile.jpeg | Portrait
-assets/dj-from-behind.jpeg | Live session
-assets/dj-trippy.jpeg | Live visuals
+assets/dj-from-behind.jpeg | Behind the decks
+assets/dj-trippy.jpeg | Visuals
 assets/vinyl-collection.jpeg | Vinyl selection

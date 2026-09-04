@@ -136,8 +136,7 @@ body {
 
 /* ---------------------------------------------------------- Sections --- */
 
-.music-section,
-.gallery-section {
+.music-section {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -243,49 +242,6 @@ body {
 
 .player-credit .dot { margin: 0 0.5rem; opacity: 0.4; }
 
-/* ----------------------------------------------------------- Gallery --- */
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1px;
-  background: var(--line);
-  border: 1px solid var(--line);
-}
-
-.gallery-card {
-  position: relative;
-  overflow: hidden;
-  background: var(--bg);
-  aspect-ratio: 4 / 3;
-}
-
-.gallery-card img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(1) contrast(1.12);
-  transition: filter 0.35s ease;
-}
-
-.gallery-card:hover img { filter: grayscale(0) contrast(1); }
-
-.card-caption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0.6rem 0.85rem;
-  background: rgba(10, 10, 10, 0.88);
-  border-top: 1px solid var(--line);
-  font-family: var(--mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--dim);
-}
-
 /* ------------------------------------------------------------ Footer --- */
 
 footer {
@@ -340,6 +296,21 @@ body.presskit {
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
+
+.pk-bar-back {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line-strong);
+  color: var(--dim);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.pk-bar-back:hover { color: var(--signal); border-color: var(--signal); }
 
 .pk-bar-name {
   font-weight: 700;
@@ -725,6 +696,8 @@ body.presskit {
   .pk-hero { grid-template-columns: 1fr; }
   .pk-hero-photo { max-width: 150px; }
   .pk-bar-meta { display: none; }
+  .pk-bar { gap: 0.75rem; }
+  .pk-bar-back { padding: 0.4rem 0.6rem; }
   .pk-shows li { grid-template-columns: 3.5rem 1fr; }
   .pk-show-city { grid-column: 2; }
 }

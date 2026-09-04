@@ -75,6 +75,7 @@ body {
   height: 132px;
   border: 1px solid var(--line);
   padding: 5px;
+  margin-inline: auto;
 }
 
 .profile-img {
@@ -694,12 +695,27 @@ body.presskit {
 
 @media (max-width: 640px) {
   .pk-hero { grid-template-columns: 1fr; }
-  .pk-hero-photo { max-width: 150px; }
+  .pk-hero-photo { max-width: 150px; margin-inline: auto; }
   .pk-bar-meta { display: none; }
   .pk-bar { gap: 0.75rem; }
   .pk-bar-back { padding: 0.4rem 0.6rem; }
   .pk-shows li { grid-template-columns: 3.5rem 1fr; }
   .pk-show-city { grid-column: 2; }
+}
+
+/* --------------------------------------------------------------------------
+   Portrait crop
+   profile.jpeg is landscape 3:2 but is shown in square frames (homepage hero,
+   press kit hero, press photo grid), so object-fit: cover crops ~33% off the
+   width. The subject stands at roughly 57% across the source rather than dead
+   centre, so a 50% crop leaves them sitting right of centre. Shifting the crop
+   window to 70% lands them at 51% of the frame.
+
+   Targets the file rather than each frame so all three stay consistent, and
+   leaves the other photos on their default centre crop.
+   -------------------------------------------------------------------------- */
+img[src$="profile.jpeg"] {
+  object-position: 70% 50%;
 }
 
 /* Print: promoters still print riders. Drop the chrome and the dead embeds. */

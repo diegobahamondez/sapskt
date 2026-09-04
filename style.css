@@ -107,6 +107,11 @@ body {
   letter-spacing: 0.28em;
 }
 
+.hero .pk-modes {
+  margin-inline: auto;
+  margin-top: 0.25rem;
+}
+
 .hero-nav {
   display: flex;
   flex-wrap: wrap;
@@ -954,3 +959,47 @@ body.mode-reggaeton .pk-details-body { border-left-color: var(--signal); }
   body.mode-reggaeton .pk-heading::after { background: #999; }
   body.mode-reggaeton .pk-photo img { filter: grayscale(1); }
 }
+
+/* Reggaeton mode, homepage elements ---------------------------------------
+   The press kit block above styles .pk-* classes; the homepage has its own,
+   so the same treatment is applied to those here. */
+
+body.mode-reggaeton .title {
+  font-family: 'Orbitron', var(--font);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: linear-gradient(180deg, #ffffff 0%, #ffd9ef 38%, #ff2d95 62%, #a3128f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 22px rgba(255, 45, 149, 0.55));
+}
+
+body.mode-reggaeton .subtitle { color: var(--dim); }
+
+body.mode-reggaeton .section-num {
+  color: var(--cyan);
+  text-shadow: 0 0 12px rgba(61, 240, 255, 0.55);
+}
+
+body.mode-reggaeton .profile-container { border-radius: 16px; }
+body.mode-reggaeton .profile-img {
+  border-radius: 11px;
+  filter: saturate(1.18) contrast(1.04);
+}
+body.mode-reggaeton .profile-container:hover .profile-img { filter: saturate(1.3) contrast(1.06); }
+
+body.mode-reggaeton .hero-nav,
+body.mode-reggaeton .player-frame { border-radius: 12px; overflow: hidden; }
+
+body.mode-reggaeton .hero-nav { border-radius: 999px; }
+body.mode-reggaeton .hero-nav a:hover { color: var(--signal); background-color: var(--surface); }
+
+body.mode-reggaeton .player-card {
+  border-radius: 14px;
+  box-shadow: 0 0 32px rgba(255, 45, 149, 0.12);
+}
+
+body.mode-reggaeton .player-card:hover { border-color: var(--signal); }
+body.mode-reggaeton .player-tag { border-radius: 999px; }
+body.mode-reggaeton .player-credit a:hover { color: var(--signal); border-color: var(--signal); }

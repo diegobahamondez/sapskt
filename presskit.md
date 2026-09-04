@@ -32,9 +32,10 @@ Bandcamp: https://sapskt.bandcamp.com
 SoundCloud: https://soundcloud.com/sapskt
 
 ## Music
-<!-- title | soundcloud track id | label | player style (visual or compact) -->
-smile when you dance | 2343063593 | Mixset | visual
-Fake Dichotomy | 2319999095 | Track | compact
+<!-- title | soundcloud track id | label | player style (visual or compact)
+     followed by any number of optional "link text > url" fields -->
+smile when you dance | 2343063593 | Mixset | visual | Listen on SoundCloud > https://soundcloud.com/sapskt/smile-when-you-dance
+Fake Dichotomy | 2319999095 | Track | compact | Listen on SoundCloud > https://soundcloud.com/sapskt/fake-dichotomy | Free download on Bandcamp > https://sapskt.bandcamp.com/track/fake-dichotomy
 
 ## Bio short
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
@@ -142,7 +143,7 @@ Recent output includes the mix "Cyberperreo", on SoundCloud.
 
 ## Music [reggaeton]
 <!-- Reggaeton is mixed, not produced, so this kit carries a mix and no tracks. -->
-Cyberperreo | 1344712147 | Mixset | visual
+Cyberperreo | 1344712147 | Mixset | visual | Listen on SoundCloud > https://soundcloud.com/sapskt/cyberperreo
 
 ## Tech rider [reggaeton]
 <!-- No vinyl block: reggaeton sets are digital only. -->

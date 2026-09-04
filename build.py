@@ -142,6 +142,28 @@ def rows(lines, width):
     return out
 
 
+def music_rows(lines):
+    """Parse: title | track id | label | player style | link... | link...
+
+    Each trailing field is an optional "text > url" pair, so a release can
+    carry as many links as it needs without changing the row format.
+    """
+    out = []
+    for line in content_lines(lines):
+        if "|" not in line:
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) < 4:
+            continue
+        links = []
+        for extra in parts[4:]:
+            if ">" in extra:
+                text, url = extra.split(">", 1)
+                links.append((text.strip(), url.strip()))
+        out.append((parts[0], parts[1], parts[2], parts[3], links))
+    return out
+
+
 def paragraphs(lines):
     """Blank-line separated prose. TODO lines are dropped, blanks preserved."""
     kept = [l for l in lines if not is_todo(l)]
@@ -271,7 +293,7 @@ def section(sid, heading, body, num):
 def render(doc, mode):
     meta = merged_kv(doc, "Meta", mode)
     socials = merged_kv(doc, "Socials", mode)
-    music = rows(resolve(doc, "Music", mode), 4)
+    music = music_rows(resolve(doc, "Music", mode))
     bio_short = paragraphs(resolve(doc, "Bio short", mode))
     bio_full = paragraphs(resolve(doc, "Bio full", mode))
     video = content_lines(resolve(doc, "Live video", mode))
@@ -302,12 +324,7 @@ def render(doc, mode):
         # Loaded only where it is used, so the techno page pays nothing for it.
         fonts += "&family=Orbitron:wght@700;900"
 
-    toggle = (
-        '    <div class="pk-modes" role="group" aria-label="Press kit version">\n'
-        f'      <span class="pk-mode is-active" aria-current="true">{e(LABELS[mode])}</span>\n'
-        f'      <a class="pk-mode" href="{PAGES[other]}">{e(LABELS[other])}</a>\n'
-        "    </div>"
-    )
+    toggle = mode_toggle(mode, PAGES, 4)
 
     # -- head -------------------------------------------------------------
     out.append(f"""<!DOCTYPE html>
@@ -330,8 +347,8 @@ def render(doc, mode):
   <div class="bg-overlay"></div>
 
   <div class="pk-bar">
-    <a class="pk-bar-back" href="index.html">&#8592; Site</a>
-    <a class="pk-bar-name" href="index.html">{e(name)}</a>
+    <a class="pk-bar-back" href="{HOME[mode]}">&#8592; Site</a>
+    <a class="pk-bar-name" href="{HOME[mode]}">{e(name)}</a>
 {toggle}
     <button class="pk-bar-print js-print" type="button" hidden>PDF</button>
     <a class="pk-bar-cta" href="mailto:{e(email)}">Book</a>
@@ -372,11 +389,19 @@ def render(doc, mode):
     if music:
         colors = ["ff3b00"]
         body = ""
-        for i, (title, tid, label, style) in enumerate(music):
+        for i, (title, tid, label, style, links) in enumerate(music):
             visual = "true" if style.lower() == "visual" else "false"
             height = 400 if visual == "true" else 166
             src = WIDGET.format(tid=e(tid), color=colors[i % len(colors)], visual=visual)
             cls = " pk-player--visual" if visual == "true" else ""
+            # Also carries the URLs into print, where the embeds are dropped.
+            credits = ""
+            if links:
+                joined = ' <span class="dot">&middot;</span> '.join(
+                    f'<a href="{e(url)}" target="_blank" rel="noopener">{e(text)}</a>'
+                    for text, url in links
+                )
+                credits = f'        <p class="pk-player-credit">{joined}</p>\n'
             body += f"""      <article class="pk-player{cls}">
         <div class="pk-player-meta">
           <span class="pk-tag">{e(label)}</span>
@@ -387,7 +412,7 @@ def render(doc, mode):
             scrolling="no" frameborder="no" loading="lazy" allow="autoplay; encrypted-media"
             src="{src}"></iframe>
         </div>
-      </article>
+{credits}      </article>
 """
         out.append(emit("listen", "Listen", body))
         rendered.append("listen")
@@ -508,7 +533,7 @@ def render(doc, mode):
 
   <footer class="pk-footer">
     <p>&copy; 2026 {e(name)}. All rights reserved.</p>
-    <p><a href="index.html">Back to site</a></p>
+    <p><a href="{HOME[mode]}">Back to site</a></p>
   </footer>
   <script src="shows.js" defer></script>
 </body>
@@ -580,54 +605,137 @@ SCRIPT = """/* Shows are split into upcoming and past at build time, which is co
 """
 
 
-INDEX = ROOT / "index.html"
 SHOWS_JS = ROOT / "shows.js"
-MARK_START = "<!-- shows:start -->"
-MARK_END = "<!-- shows:end -->"
+
+# The homepage exists in both modes too, so the choice follows the visitor
+# across the whole site rather than living only inside the press kit.
+HOME = {"techno": "index.html", "reggaeton": "index-reggaeton.html"}
 
 
-def index_shows(upcoming, past, first_num):
-    """Render the homepage shows block.
+def mode_toggle(mode, pages, indent):
+    """The Techno / Reggaeton switch.
 
-    Same data and same list markup as the press kit, but using the homepage's
-    own heading classes so it matches that page rather than importing the
-    press kit's look.
+    `pages` decides which pair it moves between, so the homepage toggle stays
+    on the homepage and the press kit toggle stays in the press kit.
     """
-    out = ""
-    n = first_num
+    other = "reggaeton" if mode == "techno" else "techno"
+    pad = " " * indent
+    return (
+        f'{pad}<div class="pk-modes" role="group" aria-label="Version">\n'
+        f'{pad}  <span class="pk-mode is-active" aria-current="true">{e(LABELS[mode])}</span>\n'
+        f'{pad}  <a class="pk-mode" href="{pages[other]}">{e(LABELS[other])}</a>\n'
+        f"{pad}</div>"
+    )
+
+
+def render_index(doc, mode):
+    """The homepage, generated from the same source as the press kit."""
+    meta = merged_kv(doc, "Meta", mode)
+    socials = merged_kv(doc, "Socials", mode)
+    music = music_rows(resolve(doc, "Music", mode))
+    upcoming, past = split_shows(rows(resolve(doc, "Shows", mode), 3), date.today())
+
+    name = meta.get("name", "Artist")
+    genres = meta.get("genres", "")
+    city = meta.get("city", "").split(",")[0].strip()
+    subtitle = " &middot; ".join(x for x in (genres, city) if x)
+
+    fonts = "family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700"
+    if mode == "reggaeton":
+        fonts += "&family=Orbitron:wght@700;900"
+
+    toggle = mode_toggle(mode, HOME, 6)
+    soundcloud = socials.get("SoundCloud", "https://soundcloud.com")
+
+    out = [f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{e(name)} | {e(genres)}</title>
+  <meta name="description" content="{e(meta.get('hook', ''))}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?{fonts}&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="mode-{mode}">
+  <div class="bg-overlay"></div>
+
+  <main id="app">
+    <header class="hero">
+      <div class="profile-container">
+        <img src="assets/profile.jpeg" alt="{e(name)} portrait" class="profile-img">
+      </div>
+      <h1 class="title">{e(name)}</h1>
+      <p class="subtitle">{subtitle}</p>
+{toggle}
+      <nav class="hero-nav">
+        <a href="#music">Listen</a>
+        <a href="#shows">Shows</a>
+        <a href="{PAGES[mode]}">Press Kit</a>
+        <a href="{e(soundcloud)}" target="_blank" rel="noopener">SoundCloud</a>
+      </nav>
+    </header>
+
+"""]
+
+    n = 1
+    if music:
+        body = ""
+        for title, tid, label, style, links in music:
+            visual = "true" if style.lower() == "visual" else "false"
+            height = 400 if visual == "true" else 166
+            src = WIDGET.format(tid=e(tid), color="ff3b00", visual=visual)
+            cls = " player-frame--visual" if visual == "true" else ""
+            credit = ""
+            if links:
+                joined = ' <span class="dot">&middot;</span> '.join(
+                    f'<a href="{e(url)}" target="_blank" rel="noopener">{e(text)}</a>'
+                    for text, url in links
+                )
+                credit = f'        <p class="player-credit">{joined}</p>\n'
+            body += f"""      <article class="player-card">
+        <div class="player-meta">
+          <span class="player-tag">{e(label)}</span>
+          <h3 class="player-title">{e(title)}</h3>
+        </div>
+        <div class="player-frame{cls}">
+          <iframe title="{e(name)} — {e(title)} on SoundCloud" width="100%" height="{height}"
+            scrolling="no" frameborder="no" loading="lazy" allow="autoplay; encrypted-media"
+            src="{src}"></iframe>
+        </div>
+{credit}      </article>
+"""
+        out.append(f"""    <section class="music-section site-section" id="music">
+      <h2 class="section-title"><span class="section-num">{n:02d}</span> Listen</h2>
+{body}    </section>
+
+""")
+        n += 1
+
     for sid, heading, entries in (("upcoming", "Upcoming", upcoming),
                                   ("shows", "Shows", past)):
         if not entries:
             continue
-        out += (
-            f'    <section class="shows-section site-section" id="{sid}">\n'
-            f'      <h2 class="section-title"><span class="section-num">{n:02d}</span> {heading}</h2>\n'
-            f"{shows_html(entries)}"
-            "    </section>\n\n"
-        )
+        out.append(f"""    <section class="shows-section site-section" id="{sid}">
+      <h2 class="section-title"><span class="section-num">{n:02d}</span> {heading}</h2>
+{shows_html(entries)}    </section>
+
+""")
         n += 1
-    return out
 
+    out.append(f"""  </main>
 
-def write_index(upcoming, past):
-    """Splice the shows block into index.html between its markers.
+  <footer>
+    <p>&copy; 2026 {e(name)}</p>
+  </footer>
 
-    index.html stays hand-written; only the marked region is generated, so the
-    homepage and the press kit can never disagree about the show list.
-    """
-    if not INDEX.exists():
-        return "index.html missing - skipped"
-    html_text = INDEX.read_text(encoding="utf-8")
-    if MARK_START not in html_text or MARK_END not in html_text:
-        return "markers not found - skipped"
-    head, rest = html_text.split(MARK_START, 1)
-    _, tail = rest.split(MARK_END, 1)
-    block = index_shows(upcoming, past, 2)
-    new = f"{head}{MARK_START}\n{block}    {MARK_END}{tail}"
-    if new != html_text:
-        INDEX.write_text(new, encoding="utf-8")
-        return "updated"
-    return "unchanged"
+  <script src="shows.js" defer></script>
+</body>
+</html>
+""")
+    return "".join(out)
 
 
 def main():
@@ -645,11 +753,13 @@ def main():
         print(f"  sections rendered : {', '.join(rendered)}")
         print(f"  sections skipped  : {', '.join(skipped) if skipped else 'none'}")
 
+    for mode in MODES:
+        home = ROOT / HOME[mode]
+        home.write_text(render_index(doc, mode), encoding="utf-8")
+        print(f"built {home.name}  [{mode} homepage]")
+
     SHOWS_JS.write_text(SCRIPT, encoding="utf-8")
     print(f"built {SHOWS_JS.name}  [shared by all pages]")
-
-    up, past = split_shows(rows(doc.get("Shows", []), 3), date.today())
-    print(f"index.html shows block: {write_index(up, past)}")
 
     overrides = sorted(k for k in doc if "[" in k)
     print(f"\nmode overrides: {', '.join(overrides) if overrides else 'none'}")

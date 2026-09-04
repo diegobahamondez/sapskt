@@ -69,9 +69,21 @@ Recent output includes the mixset "smile when you dance" and the track
 <!-- Paste any YouTube or Vimeo URL; the build converts it to an embed. -->
 https://www.youtube.com/watch?v=kEO8XYp0HsI
 
+## Upcoming
+<!-- date | venue | city — one per line. Use a specific day once confirmed:
+     an upcoming show with only a month reads as tentative rather than booked. -->
+<!-- After the show, move this row down into Selected shows as "Sep 2026".
+     An Upcoming section holding a date that has passed is worse than no
+     Upcoming section at all. -->
+05 Sep 2026 | Zum Genossen | Berlin
+
 ## Selected shows
-<!-- year | venue | city  — one per line -->
-TODO
+<!-- date | venue | city — one per line, most recent first.
+     A run of editions can be one row (Antenazo I-V) rather than five. -->
+Aug 2026 | Club AMT | Berlin
+Jul 2026 | Zum Genossen | Berlin
+May 2026 | Trude Ruth und Goldammer | Berlin
+2022-23 | Antenazo I-V | Santiago
 
 ## Tech rider
 

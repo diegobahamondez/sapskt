@@ -169,6 +169,19 @@ def e(s):
     return html.escape(str(s), quote=True)
 
 
+def shows_html(entries):
+    """Render a date/venue/city list. Shared by Upcoming and Selected shows."""
+    out = '      <ul class="pk-shows">\n'
+    for when, venue, city in entries:
+        out += (
+            "        <li>"
+            f'<span class="pk-show-year">{e(when)}</span>'
+            f'<span class="pk-show-venue">{e(venue)}</span>'
+            f'<span class="pk-show-city">{e(city)}</span></li>\n'
+        )
+    return out + "      </ul>\n"
+
+
 def section(sid, heading, body, num):
     """Render one section. `num` is its position among the sections that were
     actually rendered, so hiding an empty section does not leave a gap in the
@@ -188,6 +201,7 @@ def render(doc):
     bio_short = paragraphs(doc.get("Bio short", []))
     bio_full = paragraphs(doc.get("Bio full", []))
     video = content_lines(doc.get("Live video", []))
+    upcoming = rows(doc.get("Upcoming", []), 3)
     shows = rows(doc.get("Selected shows", []), 3)
     rider = subsections(doc.get("Tech rider", []))
     photos = rows(doc.get("Press photos", []), 2)
@@ -324,18 +338,16 @@ def render(doc):
     else:
         skipped.append("live")
 
+    # -- upcoming ---------------------------------------------------------
+    if upcoming:
+        out.append(emit("upcoming", "Upcoming", shows_html(upcoming)))
+        rendered.append("upcoming")
+    else:
+        skipped.append("upcoming")
+
     # -- shows ------------------------------------------------------------
     if shows:
-        body = '      <ul class="pk-shows">\n'
-        for year, venue, city in shows:
-            body += (
-                "        <li>"
-                f'<span class="pk-show-year">{e(year)}</span>'
-                f'<span class="pk-show-venue">{e(venue)}</span>'
-                f'<span class="pk-show-city">{e(city)}</span></li>\n'
-            )
-        body += "      </ul>\n"
-        out.append(emit("shows", "Selected shows", body))
+        out.append(emit("shows", "Selected shows", shows_html(shows)))
         rendered.append("shows")
     else:
         skipped.append("shows")

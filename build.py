@@ -29,7 +29,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 SOURCE = ROOT / "presskit.md"
-OUTPUT = ROOT / "presskit.html"
+
+# Each mode renders its own page, so a link sent to a booker is exactly the kit
+# they should see - no JavaScript, and nothing of the other mode in the source.
+MODES = ("techno", "reggaeton")
+PAGES = {"techno": "presskit.html", "reggaeton": "presskit-reggaeton.html"}
+LABELS = {"techno": "Techno", "reggaeton": "Reggaeton"}
 
 # Instagram glyph, inlined so it needs no network request and inherits the
 # surrounding text colour via currentColor.
@@ -66,6 +71,26 @@ def is_todo(line):
     if s.startswith("- "):
         s = s[2:].strip()
     return s.upper().startswith("TODO")
+
+
+def resolve(doc, title, mode):
+    """A section's mode-specific version if it exists, else the shared one.
+
+    Write a section once and it applies to both kits; add "## Title [mode]"
+    only for the parts that genuinely differ.
+    """
+    return doc.get(f"{title} [{mode}]", doc.get(title, []))
+
+
+def merged_kv(doc, title, mode):
+    """Key/value sections merge rather than replace.
+
+    A mode override that only sets `hook` must not silently drop the booking
+    email and everything else defined in the shared block.
+    """
+    out = kv(doc.get(title, []))
+    out.update(kv(doc.get(f"{title} [{mode}]", [])))
+    return out
 
 
 def strip_comments(text):
@@ -243,16 +268,16 @@ def section(sid, heading, body, num):
     )
 
 
-def render(doc):
-    meta = kv(doc.get("Meta", []))
-    socials = kv(doc.get("Socials", []))
-    music = rows(doc.get("Music", []), 4)
-    bio_short = paragraphs(doc.get("Bio short", []))
-    bio_full = paragraphs(doc.get("Bio full", []))
-    video = content_lines(doc.get("Live video", []))
-    upcoming, shows = split_shows(rows(doc.get("Shows", []), 3), date.today())
-    rider = subsections(doc.get("Tech rider", []))
-    photos = rows(doc.get("Press photos", []), 2)
+def render(doc, mode):
+    meta = merged_kv(doc, "Meta", mode)
+    socials = merged_kv(doc, "Socials", mode)
+    music = rows(resolve(doc, "Music", mode), 4)
+    bio_short = paragraphs(resolve(doc, "Bio short", mode))
+    bio_full = paragraphs(resolve(doc, "Bio full", mode))
+    video = content_lines(resolve(doc, "Live video", mode))
+    upcoming, shows = split_shows(rows(resolve(doc, "Shows", mode), 3), date.today())
+    rider = subsections(resolve(doc, "Tech rider", mode))
+    photos = rows(resolve(doc, "Press photos", mode), 2)
 
     name = meta.get("name", "Artist")
     hook = meta.get("hook", "")
@@ -270,30 +295,45 @@ def render(doc):
         counter["n"] += 1
         return section(sid, heading, body, counter["n"])
 
+    other = "reggaeton" if mode == "techno" else "techno"
+
+    fonts = "family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700"
+    if mode == "reggaeton":
+        # Loaded only where it is used, so the techno page pays nothing for it.
+        fonts += "&family=Orbitron:wght@700;900"
+
+    toggle = (
+        '    <div class="pk-modes" role="group" aria-label="Press kit version">\n'
+        f'      <span class="pk-mode is-active" aria-current="true">{e(LABELS[mode])}</span>\n'
+        f'      <a class="pk-mode" href="{PAGES[other]}">{e(LABELS[other])}</a>\n'
+        "    </div>"
+    )
+
     # -- head -------------------------------------------------------------
     out.append(f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{e(name)} | Press Kit</title>
+  <title>{e(name)} | {e(LABELS[mode])} Press Kit</title>
   <meta name="description" content="{e(hook)}">
-  <meta property="og:title" content="{e(name)} — Press Kit">
+  <meta property="og:title" content="{e(name)} — {e(LABELS[mode])} Press Kit">
   <meta property="og:description" content="{e(hook)}">
   <meta property="og:type" content="profile">
   <meta property="og:image" content="assets/profile.jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?{fonts}&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="presskit">
+<body class="presskit mode-{mode}">
   <div class="bg-overlay"></div>
 
   <div class="pk-bar">
     <a class="pk-bar-back" href="index.html">&#8592; Site</a>
     <a class="pk-bar-name" href="index.html">{e(name)}</a>
-    <span class="pk-bar-meta">{e(barmeta)}</span>
+{toggle}
+    <button class="pk-bar-print js-print" type="button" hidden>PDF</button>
     <a class="pk-bar-cta" href="mailto:{e(email)}">Book</a>
   </div>
 
@@ -470,66 +510,124 @@ def render(doc):
     <p>&copy; 2026 {e(name)}. All rights reserved.</p>
     <p><a href="index.html">Back to site</a></p>
   </footer>
-""" + SCRIPT + """</body>
+  <script src="shows.js" defer></script>
+</body>
 </html>
 """)
 
     return "".join(out), rendered, skipped
 
 
-SCRIPT = """  <script>
-  /* Shows are split into upcoming and past at build time, which is correct on
-     the day of the deploy. This re-checks in the browser so the page stays
-     right on every later visit without needing a rebuild. Progressive
-     enhancement: with the script blocked, the build-time split still stands. */
-  (function () {
-    var upSec = document.getElementById('upcoming');
-    if (!upSec) return;
-    var upList = upSec.querySelector('.pk-shows');
-    if (!upList) return;
-    var pastSec = document.getElementById('shows');
-    var pastList = pastSec ? pastSec.querySelector('.pk-shows') : null;
+SCRIPT = """/* Shows are split into upcoming and past at build time, which is correct on
+   the day of the deploy. This re-checks in the browser so every page stays
+   right on later visits without a rebuild. Progressive enhancement: with the
+   script blocked, the build-time split still stands. */
+(function () {
+  /* The PDF button ships hidden so it is never a dead control without
+     scripting; the browser's own print dialog handles Save as PDF. */
+  var printBtn = document.querySelector('.js-print');
+  if (printBtn) {
+    printBtn.hidden = false;
+    printBtn.addEventListener('click', function () { window.print(); });
+  }
 
-    var today = new Date();
-    today.setHours(0, 0, 0, 0);
+  var upSec = document.getElementById('upcoming');
+  if (!upSec) return;
+  var upList = upSec.querySelector('.pk-shows');
+  if (!upList) return;
+  var pastSec = document.getElementById('shows');
+  var pastList = pastSec ? pastSec.querySelector('.pk-shows') : null;
 
-    var stale = [];
-    Array.prototype.forEach.call(upList.children, function (li) {
-      var iso = li.getAttribute('data-date');
-      if (!iso) return;
-      var p = iso.split('-');
-      if (new Date(+p[0], +p[1] - 1, +p[2]) < today) stale.push(li);
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  var stale = [];
+  Array.prototype.forEach.call(upList.children, function (li) {
+    var iso = li.getAttribute('data-date');
+    if (!iso) return;
+    var p = iso.split('-');
+    if (new Date(+p[0], +p[1] - 1, +p[2]) < today) stale.push(li);
+  });
+
+  if (stale.length && pastList) {
+    stale.forEach(function (li) { pastList.appendChild(li); });
+    var items = Array.prototype.slice.call(pastList.children);
+    items.sort(function (a, b) {
+      var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return db.localeCompare(da);
     });
+    items.forEach(function (li) { pastList.appendChild(li); });
+  }
 
-    if (stale.length && pastList) {
-      stale.forEach(function (li) { pastList.appendChild(li); });
-      var items = Array.prototype.slice.call(pastList.children);
-      items.sort(function (a, b) {
-        var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
-        if (!da && !db) return 0;
-        if (!da) return 1;
-        if (!db) return -1;
-        return db.localeCompare(da);
-      });
-      items.forEach(function (li) { pastList.appendChild(li); });
-    }
+  if (!upList.children.length) upSec.hidden = true;
 
-    if (!upList.children.length) upSec.hidden = true;
-
-    /* Section numbers are baked in at build time, so renumber whatever is
-       still visible rather than leaving a gap where Upcoming used to be. */
-    var n = 0;
-    Array.prototype.forEach.call(
-      document.querySelectorAll('.pk-section'), function (sec) {
-        if (sec.hidden) return;
-        var num = sec.querySelector('.pk-num');
-        if (!num) return;
-        n += 1;
-        num.textContent = n < 10 ? '0' + n : String(n);
-      });
-  })();
-  </script>
+  /* Section numbers are baked in at build time, so renumber whatever is still
+     visible rather than leaving a gap. Both page types are covered: the press
+     kit uses .pk-section/.pk-num, the homepage .site-section/.section-num. */
+  var n = 0;
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.pk-section, .site-section'), function (sec) {
+      if (sec.hidden) return;
+      var num = sec.querySelector('.pk-num, .section-num');
+      if (!num) return;
+      n += 1;
+      num.textContent = n < 10 ? '0' + n : String(n);
+    });
+})();
 """
+
+
+INDEX = ROOT / "index.html"
+SHOWS_JS = ROOT / "shows.js"
+MARK_START = "<!-- shows:start -->"
+MARK_END = "<!-- shows:end -->"
+
+
+def index_shows(upcoming, past, first_num):
+    """Render the homepage shows block.
+
+    Same data and same list markup as the press kit, but using the homepage's
+    own heading classes so it matches that page rather than importing the
+    press kit's look.
+    """
+    out = ""
+    n = first_num
+    for sid, heading, entries in (("upcoming", "Upcoming", upcoming),
+                                  ("shows", "Shows", past)):
+        if not entries:
+            continue
+        out += (
+            f'    <section class="shows-section site-section" id="{sid}">\n'
+            f'      <h2 class="section-title"><span class="section-num">{n:02d}</span> {heading}</h2>\n'
+            f"{shows_html(entries)}"
+            "    </section>\n\n"
+        )
+        n += 1
+    return out
+
+
+def write_index(upcoming, past):
+    """Splice the shows block into index.html between its markers.
+
+    index.html stays hand-written; only the marked region is generated, so the
+    homepage and the press kit can never disagree about the show list.
+    """
+    if not INDEX.exists():
+        return "index.html missing - skipped"
+    html_text = INDEX.read_text(encoding="utf-8")
+    if MARK_START not in html_text or MARK_END not in html_text:
+        return "markers not found - skipped"
+    head, rest = html_text.split(MARK_START, 1)
+    _, tail = rest.split(MARK_END, 1)
+    block = index_shows(upcoming, past, 2)
+    new = f"{head}{MARK_START}\n{block}    {MARK_END}{tail}"
+    if new != html_text:
+        INDEX.write_text(new, encoding="utf-8")
+        return "updated"
+    return "unchanged"
 
 
 def main():
@@ -538,16 +636,28 @@ def main():
 
     text = SOURCE.read_text(encoding="utf-8")
     doc = parse(text)
-    page, rendered, skipped = render(doc)
-    OUTPUT.write_text(page, encoding="utf-8")
+
+    for mode in MODES:
+        page, rendered, skipped = render(doc, mode)
+        target = ROOT / PAGES[mode]
+        target.write_text(page, encoding="utf-8")
+        print(f"built {target.name}  [{mode}]")
+        print(f"  sections rendered : {', '.join(rendered)}")
+        print(f"  sections skipped  : {', '.join(skipped) if skipped else 'none'}")
+
+    SHOWS_JS.write_text(SCRIPT, encoding="utf-8")
+    print(f"built {SHOWS_JS.name}  [shared by all pages]")
+
+    up, past = split_shows(rows(doc.get("Shows", []), 3), date.today())
+    print(f"index.html shows block: {write_index(up, past)}")
+
+    overrides = sorted(k for k in doc if "[" in k)
+    print(f"\nmode overrides: {', '.join(overrides) if overrides else 'none'}")
 
     todos = [l.strip() for l in text.splitlines() if is_todo(l)]
-    print(f"built {OUTPUT.name} from {SOURCE.name}")
-    print(f"  sections rendered : {', '.join(rendered)}")
-    print(f"  sections skipped  : {', '.join(skipped) if skipped else 'none'}")
-    print(f"  TODOs remaining   : {len(todos)}")
+    print(f"TODOs remaining: {len(todos)}")
     for t in todos:
-        print(f"    - {t}")
+        print(f"  - {t}")
 
 
 if __name__ == "__main__":

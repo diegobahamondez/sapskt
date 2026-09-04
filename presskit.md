@@ -107,6 +107,27 @@ May 2026 | Trude Ruth und Goldammer | Berlin
 - TODO: monitoring requirements
 - TODO: hospitality and travel requirements
 
+## Music [reggaeton]
+<!-- Reggaeton is mixed, not produced, so this kit carries a mix and no tracks. -->
+Cyberperreo | 1344712147 | Mixset | visual
+
+## Tech rider [reggaeton]
+<!-- No vinyl block: reggaeton sets are digital only. -->
+### Digital
+- Pioneer CDJ setup
+- USB playback
+- TODO: confirm preferred CDJ model and number of decks
+
+### Mixers
+- Allen & Heath Xone
+- Pioneer DJM
+
+### Notes
+- Reggaeton sets are digital only.
+- Able to work with most house setups.
+- TODO: monitoring requirements
+- TODO: hospitality and travel requirements
+
 ## Press photos
 <!-- file | caption -->
 assets/profile.jpeg | Portrait

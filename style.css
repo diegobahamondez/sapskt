@@ -137,7 +137,8 @@ body {
 
 /* ---------------------------------------------------------- Sections --- */
 
-.music-section {
+.music-section,
+.shows-section {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -322,16 +323,51 @@ body.presskit {
   font-size: 0.9rem;
 }
 
-.pk-bar-meta {
-  font-family: var(--mono);
-  color: var(--dim);
-  font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+.pk-modes {
+  display: flex;
+  margin-left: auto;
+  border: 1px solid var(--line-strong);
 }
 
+.pk-mode {
+  padding: 0.42rem 0.85rem;
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.pk-mode + .pk-mode { border-left: 1px solid var(--line-strong); }
+
+.pk-mode.is-active {
+  background: var(--signal);
+  color: #0a0a0a;
+  font-weight: 700;
+}
+
+a.pk-mode:hover { color: var(--signal); }
+
+.pk-bar-print {
+  padding: 0.42rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  background: none;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 0.63rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.pk-bar-print:hover { color: var(--signal); border-color: var(--signal); }
+
 .pk-bar-cta {
-  margin-left: auto;
   padding: 0.55rem 1.4rem;
   background: var(--signal);
   color: #0a0a0a;
@@ -699,7 +735,7 @@ body.presskit {
 @media (max-width: 640px) {
   .pk-hero { grid-template-columns: 1fr; }
   .pk-hero-photo { max-width: 150px; margin-inline: auto; }
-  .pk-bar-meta { display: none; }
+  .pk-bar-name { display: none; }
   .pk-bar { gap: 0.75rem; }
   .pk-bar-back { padding: 0.4rem 0.6rem; }
   .pk-shows li { grid-template-columns: 6.25rem 1fr; }
@@ -776,4 +812,145 @@ img[src$="profile.jpeg"] {
   .pk-links a::after,
   .pk-credit::after { content: ' (' attr(href) ')'; font-size: 0.68rem; }
   .ig-icon { display: none; }
+}
+
+/* ==========================================================================
+   Reggaeton mode (presskit-reggaeton.html)
+   Neo-perreo / Y2K: neon on deep violet, chrome wordmark, glow where the
+   techno kit uses hairlines. Scoped entirely to body.mode-reggaeton, so the
+   techno kit is untouched by anything below.
+   ========================================================================== */
+
+body.mode-reggaeton {
+  --bg: #0b0014;
+  --surface: #1a0b28;
+  --line: #40205e;
+  --line-strong: #7b34b3;
+  --dim: #c4aedb;
+  --text: #ffffff;
+  --signal: #ff2d95;
+  --cyan: #3df0ff;
+}
+
+/* Neon wash and a tighter grid, in place of the industrial one. */
+body.mode-reggaeton .bg-overlay {
+  background-image:
+    radial-gradient(ellipse 80% 55% at 50% -8%, rgba(255, 45, 149, 0.32), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 8% 105%, rgba(61, 240, 255, 0.18), transparent 70%),
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(255, 45, 149, 0.055) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, rgba(61, 240, 255, 0.045) 39px 40px);
+}
+
+/* Chrome wordmark */
+body.mode-reggaeton .pk-name {
+  font-family: 'Orbitron', var(--font);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  background: linear-gradient(180deg, #ffffff 0%, #ffd9ef 38%, #ff2d95 62%, #a3128f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255, 45, 149, 0.55));
+}
+
+body.mode-reggaeton .pk-eyebrow,
+body.mode-reggaeton .pk-num {
+  color: var(--cyan);
+  text-shadow: 0 0 12px rgba(61, 240, 255, 0.55);
+}
+
+body.mode-reggaeton .pk-bar { background: rgba(11, 0, 20, 0.92); }
+
+/* Y2K gloss: rounded, saturated, lit from within. */
+body.mode-reggaeton .pk-player,
+body.mode-reggaeton .pk-rider-block,
+body.mode-reggaeton .pk-booking,
+body.mode-reggaeton .pk-frame,
+body.mode-reggaeton .pk-photos,
+body.mode-reggaeton .pk-rider,
+body.mode-reggaeton .pk-hero-photo img,
+body.mode-reggaeton .pk-photo img { border-radius: 14px; }
+
+body.mode-reggaeton .pk-chips li,
+body.mode-reggaeton .pk-links a,
+body.mode-reggaeton .pk-btn,
+body.mode-reggaeton .pk-mode,
+body.mode-reggaeton .pk-bar-print,
+body.mode-reggaeton .pk-tag { border-radius: 999px; }
+
+body.mode-reggaeton .pk-modes,
+body.mode-reggaeton .pk-bar-print { border-radius: 999px; overflow: hidden; }
+
+body.mode-reggaeton .pk-bar-cta,
+body.mode-reggaeton .pk-btn--primary,
+body.mode-reggaeton .pk-mode.is-active {
+  background: linear-gradient(180deg, #ff7cbf 0%, #ff2d95 55%, #cf0070 100%);
+  border-color: transparent;
+  /* Dark on neon rather than white: white on this magenta is 3.5:1, which
+     fails AA for small bold text. Dark text on the same magenta is 5.9:1. */
+  color: #14001f;
+  box-shadow: 0 0 18px rgba(255, 45, 149, 0.45);
+}
+
+body.mode-reggaeton .pk-bar-cta:hover,
+body.mode-reggaeton .pk-btn--primary:hover {
+  background: linear-gradient(180deg, #ff97cd 0%, #ff4da6 55%, #e00079 100%);
+  color: #14001f;
+}
+
+body.mode-reggaeton .pk-player { box-shadow: 0 0 32px rgba(255, 45, 149, 0.12); }
+
+body.mode-reggaeton .pk-player:hover,
+body.mode-reggaeton .pk-card:hover { border-color: var(--signal); }
+
+/* Photos keep their colour here rather than being desaturated. */
+body.mode-reggaeton .pk-hero-photo img,
+body.mode-reggaeton .pk-photo img,
+body.mode-reggaeton .pk-photo:hover img {
+  filter: saturate(1.18) contrast(1.04);
+}
+
+body.mode-reggaeton .pk-rider-block li::before {
+  background: var(--cyan);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(61, 240, 255, 0.8);
+}
+
+body.mode-reggaeton .pk-heading::after,
+body.mode-reggaeton .section-title::after {
+  background: linear-gradient(90deg, var(--signal), transparent);
+}
+
+body.mode-reggaeton .pk-show-year { color: var(--cyan); }
+
+body.mode-reggaeton .pk-details-body { border-left-color: var(--signal); }
+
+/* Print: the gradients and glows have to come off, or the wordmark prints as
+   nothing at all (transparent fill over a background that is not printed). */
+@media print {
+  body.mode-reggaeton .pk-name {
+    background: none;
+    -webkit-text-fill-color: #000;
+    color: #000;
+    filter: none;
+  }
+
+  body.mode-reggaeton .pk-eyebrow,
+  body.mode-reggaeton .pk-num,
+  body.mode-reggaeton .pk-show-year {
+    color: #000;
+    text-shadow: none;
+  }
+
+  body.mode-reggaeton .pk-player,
+  body.mode-reggaeton .pk-booking,
+  body.mode-reggaeton .pk-rider-block { box-shadow: none; }
+
+  body.mode-reggaeton .pk-rider-block li::before {
+    background: #000;
+    box-shadow: none;
+  }
+
+  body.mode-reggaeton .pk-heading::after { background: #999; }
+  body.mode-reggaeton .pk-photo img { filter: grayscale(1); }
 }

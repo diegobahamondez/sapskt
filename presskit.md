@@ -107,6 +107,39 @@ May 2026 | Trude Ruth und Goldammer | Berlin
 - TODO: monitoring requirements
 - TODO: hospitality and travel requirements
 
+## Meta [reggaeton]
+<!-- Merged over the shared Meta block, so name, booking email, origin and
+     photo credit all carry over; only these two keys are replaced. -->
+hook: The dirtiest reggaeton you can imagine, from Berlin by way of Chile. Perreo for the back of the room, not the radio.
+genres: Reggaeton, Perreo
+
+## Bio short [reggaeton]
+<!-- DRAFT — replace with your own words. Deliberately makes no vinyl claim:
+     these sets are digital only, and the shared techno bio contradicted the
+     rider on this page. -->
+SAPSKT is a Chilean DJ based in Berlin, playing reggaeton at its dirtiest and
+most physical. He mixes it rather than makes it, pulling perreo old and new
+toward the club rather than the radio, and plays these sets digital.
+
+## Bio full [reggaeton]
+<!-- DRAFT — replace with your own words. -->
+SAPSKT is a DJ from Chile, now based in Berlin.
+
+He plays reggaeton at its most physical and least polite: perreo old and new,
+mixed rather than produced, and pulled toward the club rather than the radio.
+The selection leans dirty and keeps moving, built for rooms where people came
+to dance rather than to watch.
+
+His other main curation is dark groove techno, and he treats the distance
+between the two as smaller than most people assume. The range is the point:
+the same instinct for a groove reads differently at 2am than it does at 6am,
+and the room decides which one gets played.
+
+Reggaeton sets are digital, and he is comfortable on whatever mixer the booth
+happens to have.
+
+Recent output includes the mix "Cyberperreo", on SoundCloud.
+
 ## Music [reggaeton]
 <!-- Reggaeton is mixed, not produced, so this kit carries a mix and no tracks. -->
 Cyberperreo | 1344712147 | Mixset | visual

@@ -4,18 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAPSKT | DJ & Music Producer</title>
-  <meta name="description" content="Sitio oficial de SAPSKT - DJ y Productor Musical. Noticias, fechas, mixsets y galería de fotos.">
+  <meta name="description" content="Sitio oficial de SAPSKT - DJ y Productor Musical. Galería de fotos, mixsets y presentaciones en vivo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="bg-overlay"></div>
+  
   <main id="app">
     <header class="hero">
-      <h1>SAPSKT</h1>
+      <div class="profile-container">
+        <img src="assets/perfil.jpeg" alt="SAPSKT Perfil" class="profile-img">
+      </div>
+      <h1 class="title">SAPSKT</h1>
       <p class="subtitle">DJ & Music Producer</p>
     </header>
-    <section class="content">
-      <p>Próximamente más contenido. Las imágenes se cargarán desde la carpeta <code>assets/</code>.</p>
+
+    <section class="gallery-section">
+      <h2 class="section-title">Galería</h2>
+      <div class="gallery-grid">
+        <div class="gallery-card">
+          <img src="assets/dj de espaldas.jpeg" alt="SAPSKT Live Performance" loading="lazy">
+          <div class="card-caption">Live Session</div>
+        </div>
+        <div class="gallery-card">
+          <img src="assets/dj trippy.jpeg" alt="SAPSKT Trippy Visuals" loading="lazy">
+          <div class="card-caption">Visual Experience</div>
+        </div>
+        <div class="gallery-card">
+          <img src="assets/vinilos.jpeg" alt="Colección de Vinilos SAPSKT" loading="lazy">
+          <div class="card-caption">Vinyl Selection</div>
+        </div>
+      </div>
     </section>
   </main>
+
+  <footer>
+    <p>&copy; 2026 SAPSKT. Todos los derechos reservados.</p>
+  </footer>
 </body>
 </html>

@@ -297,7 +297,8 @@ body.presskit {
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
   width: 100%;
   padding: 0.7rem clamp(1rem, 4vw, 2.5rem);
   background: var(--bg);
@@ -328,6 +329,11 @@ body.presskit {
   font-size: 0.9rem;
 }
 
+.pk-bar-back,
+.pk-bar-name,
+.pk-modes,
+.pk-bar-cta { flex-shrink: 0; }
+
 .pk-modes {
   display: flex;
   margin-left: auto;
@@ -355,22 +361,6 @@ body.presskit {
 }
 
 a.pk-mode:hover { color: var(--signal); }
-
-.pk-bar-print {
-  padding: 0.42rem 0.85rem;
-  border: 1px solid var(--line-strong);
-  background: none;
-  color: var(--dim);
-  font-family: var(--mono);
-  font-size: 0.63rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.pk-bar-print:hover { color: var(--signal); border-color: var(--signal); }
 
 .pk-bar-cta {
   padding: 0.55rem 1.4rem;
@@ -740,8 +730,7 @@ a.pk-mode:hover { color: var(--signal); }
 @media (max-width: 640px) {
   .pk-hero { grid-template-columns: 1fr; }
   .pk-hero-photo { max-width: 150px; margin-inline: auto; }
-  .pk-bar-name { display: none; }
-  .pk-bar { gap: 0.75rem; }
+  .pk-bar { gap: 0.5rem 0.75rem; }
   .pk-bar-back { padding: 0.4rem 0.6rem; }
   .pk-shows li { grid-template-columns: 6.25rem 1fr; }
   .pk-show-city { grid-column: 2; }
@@ -880,11 +869,11 @@ body.mode-reggaeton .pk-chips li,
 body.mode-reggaeton .pk-links a,
 body.mode-reggaeton .pk-btn,
 body.mode-reggaeton .pk-mode,
-body.mode-reggaeton .pk-bar-print,
 body.mode-reggaeton .pk-tag { border-radius: 999px; }
 
-body.mode-reggaeton .pk-modes,
-body.mode-reggaeton .pk-bar-print { border-radius: 999px; overflow: hidden; }
+/* No overflow: hidden here. The pills carry their own radius, and clipping
+   the container is what truncated the inactive label when space ran short. */
+body.mode-reggaeton .pk-modes { border-radius: 999px; }
 
 body.mode-reggaeton .pk-bar-cta,
 body.mode-reggaeton .pk-btn--primary,

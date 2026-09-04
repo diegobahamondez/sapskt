@@ -3,14 +3,6 @@
    right on later visits without a rebuild. Progressive enhancement: with the
    script blocked, the build-time split still stands. */
 (function () {
-  /* The PDF button ships hidden so it is never a dead control without
-     scripting; the browser's own print dialog handles Save as PDF. */
-  var printBtn = document.querySelector('.js-print');
-  if (printBtn) {
-    printBtn.hidden = false;
-    printBtn.addEventListener('click', function () { window.print(); });
-  }
-
   var upSec = document.getElementById('upcoming');
   if (!upSec) return;
   var upList = upSec.querySelector('.pk-shows');

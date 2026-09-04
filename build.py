@@ -350,7 +350,6 @@ def render(doc, mode):
     <a class="pk-bar-back" href="{HOME[mode]}">&#8592; Site</a>
     <a class="pk-bar-name" href="{HOME[mode]}">{e(name)}</a>
 {toggle}
-    <button class="pk-bar-print js-print" type="button" hidden>PDF</button>
     <a class="pk-bar-cta" href="mailto:{e(email)}">Book</a>
   </div>
 
@@ -548,14 +547,6 @@ SCRIPT = """/* Shows are split into upcoming and past at build time, which is co
    right on later visits without a rebuild. Progressive enhancement: with the
    script blocked, the build-time split still stands. */
 (function () {
-  /* The PDF button ships hidden so it is never a dead control without
-     scripting; the browser's own print dialog handles Save as PDF. */
-  var printBtn = document.querySelector('.js-print');
-  if (printBtn) {
-    printBtn.hidden = false;
-    printBtn.addEventListener('click', function () { window.print(); });
-  }
-
   var upSec = document.getElementById('upcoming');
   if (!upSec) return;
   var upList = upSec.querySelector('.pk-shows');

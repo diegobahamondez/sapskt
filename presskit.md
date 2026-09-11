@@ -16,8 +16,8 @@
 ## Meta
 name: SAPSKT
 tagline: DJ & Music Producer
-hook: Dark groove techno from Berlin, by way of Chile. Low-slung, hypnotic, built for the long hours rather than the peaks.
-genres: Dark Groove Techno
+hook: Dark groove techno from Berlin, originally from Chile. Low-slung, hypnotic, built for the long hours rather than the peaks.
+genres: Techno, Hard groove
 city: Berlin, Germany
 origin: Chile
 booking_email: diego.bahamondezm@gmail.com
@@ -41,9 +41,9 @@ Fake Dichotomy | 2319999095 | Track | compact | Listen on SoundCloud > https://s
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
 SAPSKT is a Chilean DJ and producer based in Berlin, working primarily in dark
 groove techno: low-slung, hypnotic, and built for the long stretches of a night
-rather than its obvious peaks. He also plays reggaeton at its dirtiest, and treats
-the distance between the two as smaller than most people assume. He works on both
-digital and vinyl, adapting to the room rather than to the booth.
+rather than its obvious peaks. He also plays reggaeton at its dirtiest, showing
+careful, soulful selections regardless of the genre. He works on both digital and
+vinyl, adapting to the room rather than to the booth.
 
 ## Bio full
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
@@ -53,10 +53,6 @@ His main curation is dark groove techno: low-slung, hypnotic and physical, built
 for the long stretches of a night rather than its obvious peaks. It is music that
 rewards patience, where the groove shifts slowly enough that you notice the room
 changing before you notice the record has.
-
-He also plays reggaeton, at its most physical and least polite, and treats the
-distance between the two as smaller than most people assume — a position his track
-"Fake Dichotomy" names outright.
 
 He plays both digital and vinyl, moving between Pioneer setups and Technics or
 Reloop turntables, and is comfortable on whatever mixer the booth happens to have.
@@ -96,8 +92,9 @@ May 2026 | Trude Ruth und Goldammer | Berlin
 ## Tech rider
 
 ### Digital
-- Pioneer CDJ setup
-- USB playback
+- Pioneer CDJ setup, experienced with CDJ-2000NXS and 3000s
+- USB controllers: DDJ-flx6 and DDJ-flx4
+- Comfortable with up to 4 decks 
 - TODO: confirm preferred CDJ model and number of decks
 
 ### Vinyl
@@ -105,11 +102,11 @@ May 2026 | Trude Ruth und Goldammer | Berlin
 - TODO: confirm number of turntables
 
 ### Mixers
-- Allen & Heath Xone
+- Allen & Heath Xone 92, 96 and 43
 - Pioneer DJM
 
 ### Notes
-- Comfortable on both digital and vinyl, and able to work with most house setups.
+- Comfortable on both digital and vinyl, and able to work with most setups.
 - TODO: monitoring requirements
 - TODO: hospitality and travel requirements
 
@@ -124,27 +121,20 @@ genres: Reggaeton, Perreo
      these sets are digital only, and the shared techno bio contradicted the
      rider on this page. -->
 SAPSKT is a Chilean DJ based in Berlin, playing reggaeton at its dirtiest and
-most physical. He mixes it rather than makes it, pulling perreo old and new
-toward the club rather than the radio, and plays these sets digital.
+most physical. He mixes it rather than makes it, pulling old school perreo first
+and shifting towards newer tunes later in the night, just like a time machine.
 
 ## Bio full [reggaeton]
 <!-- DRAFT — replace with your own words. -->
 SAPSKT is a DJ from Chile, now based in Berlin.
 
-He plays reggaeton at its most physical and least polite: perreo old and new,
-mixed rather than produced, and pulled toward the club rather than the radio.
+He plays reggaeton at its most physical and least polite: old school perreo first
+and shifting towards newer tunes later in the night, just like a time machine.
 The selection leans dirty and keeps moving, built for rooms where people came
 to dance rather than to watch.
 
-His other main curation is dark groove techno, and he treats the distance
-between the two as smaller than most people assume. The range is the point:
-the same instinct for a groove reads differently at 2am than it does at 6am,
-and the room decides which one gets played.
-
 Reggaeton sets are digital, and he is comfortable on whatever mixer the booth
 happens to have.
-
-Recent output includes the mix "Cyberperreo", on SoundCloud.
 
 ## Music [reggaeton]
 <!-- Reggaeton is mixed, not produced, so this kit carries a mix and no tracks. -->
@@ -153,23 +143,26 @@ Cyberperreo | 1344712147 | Mixset | visual | Listen on SoundCloud > https://soun
 ## Tech rider [reggaeton]
 <!-- No vinyl block: reggaeton sets are digital only. -->
 ### Digital
-- Pioneer CDJ setup
-- USB playback
-- TODO: confirm preferred CDJ model and number of decks
+- Pioneer CDJ setup, experienced with CDJ-2000NXS and 3000s
+- USB controllers: DDJ-flx6 and DDJ-flx4
+- Comfortable with up to 4 decks 
 
 ### Mixers
-- Allen & Heath Xone
+- Allen & Heath Xone 92, 96 and 43
 - Pioneer DJM
 
 ### Notes
 - Reggaeton sets are digital only.
-- Able to work with most house setups.
+- Able to work with most setups.
 - TODO: monitoring requirements
 - TODO: hospitality and travel requirements
 
 ## Press photos
-<!-- file | caption -->
-assets/profile.jpeg | Portrait
-assets/dj-from-behind.jpeg | Behind the decks
-assets/dj-trippy.jpeg | Visuals
-assets/vinyl-collection.jpeg | Vinyl selection
+<!-- file | caption | credit | instagram -->
+assets/profile.jpeg | Portrait | Manuela Selman | lafrau.s
+assets/dj-from-behind.jpeg | Behind the decks | Manuela Selman | lafrau.s
+assets/dj-trippy.jpeg | Visuals | Manuela Selman | lafrau.s
+assets/vinyl-collection.jpeg | Vinyl selection | Manuela Selman | lafrau.s
+assets/dj front at zum genossen.jpeg | Live at Zum Genossen | Marius Basse | moschi_photography
+assets/dj side at zum genossen BW.jpeg | Live at Zum Genossen (B&W) | Marius Basse | moschi_photography
+

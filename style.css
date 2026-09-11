@@ -992,3 +992,166 @@ body.mode-reggaeton .player-card {
 body.mode-reggaeton .player-card:hover { border-color: var(--signal); }
 body.mode-reggaeton .player-tag { border-radius: 999px; }
 body.mode-reggaeton .player-credit a:hover { color: var(--signal); border-color: var(--signal); }
+
+/* -------------------------------------------------------- Lightbox Modal --- */
+
+.pk-modal {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  max-width: none;
+  max-height: none;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.pk-modal[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pk-modal::backdrop {
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+.pk-modal-content {
+  position: relative;
+  width: min(900px, 92vw);
+  max-height: 90vh;
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.pk-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 2.2rem;
+  height: 2.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.pk-modal-close:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+.pk-modal-media {
+  position: relative;
+  width: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 260px;
+  max-height: 68vh;
+  overflow: hidden;
+}
+
+.pk-modal-media img {
+  max-width: 100%;
+  max-height: 68vh;
+  object-fit: contain;
+  display: block;
+}
+
+.pk-modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: rgba(10, 10, 10, 0.7);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+  width: 2.5rem;
+  height: 3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.pk-modal-nav:hover {
+  color: var(--signal);
+  border-color: var(--signal);
+  background: rgba(10, 10, 10, 0.9);
+}
+
+.pk-modal-nav--prev { left: 0.75rem; }
+.pk-modal-nav--next { right: 0.75rem; }
+
+.pk-modal-info {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+.pk-modal-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pk-modal-caption {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.pk-modal-credit {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--dim);
+  letter-spacing: 0.04em;
+}
+
+.pk-modal-credit .pk-credit {
+  color: var(--text);
+}
+
+.pk-modal-credit .pk-credit:hover {
+  color: var(--signal);
+}
+
+@media (max-width: 600px) {
+  .pk-modal-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .pk-modal-nav {
+    width: 2rem;
+    height: 2.4rem;
+    font-size: 1.5rem;
+  }
+}
+

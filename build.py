@@ -142,6 +142,22 @@ def rows(lines, width):
     return out
 
 
+def photo_rows(lines, default_credit="", default_handle=""):
+    """Parse: file | caption | credit | instagram handle"""
+    out = []
+    for line in content_lines(lines):
+        if "|" not in line:
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) >= 2:
+            src = parts[0]
+            caption = parts[1]
+            credit = parts[2] if len(parts) >= 3 and parts[2] else default_credit
+            handle = parts[3].lstrip("@") if len(parts) >= 4 and parts[3] else default_handle
+            out.append((src, caption, credit, handle))
+    return out
+
+
 def music_rows(lines):
     """Parse: title | track id | label | player style | link... | link...
 
@@ -299,7 +315,9 @@ def render(doc, mode):
     video = content_lines(resolve(doc, "Live video", mode))
     upcoming, shows = split_shows(rows(resolve(doc, "Shows", mode), 3), date.today())
     rider = subsections(resolve(doc, "Tech rider", mode))
-    photos = rows(resolve(doc, "Press photos", mode), 2)
+    default_credit = meta.get("photo_credit", "")
+    default_handle = meta.get("photo_credit_instagram", "").lstrip("@")
+    photos = photo_rows(resolve(doc, "Press photos", mode), default_credit, default_handle)
 
     name = meta.get("name", "Artist")
     hook = meta.get("hook", "")
@@ -467,24 +485,33 @@ def render(doc, mode):
     # -- press photos -----------------------------------------------------
     if photos:
         body = '      <div class="pk-photos">\n'
-        for src, caption in photos:
+        credits_seen = []
+        for src, caption, credit, handle in photos:
+            if credit and (credit, handle) not in credits_seen:
+                credits_seen.append((credit, handle))
             body += f"""        <figure class="pk-photo">
-          <a href="{e(src)}" download><img src="{e(src)}" alt="{e(caption)}" loading="lazy"></a>
+          <a href="{e(src)}" download data-caption="{e(caption)}" data-credit="{e(credit)}" data-handle="{e(handle)}"><img src="{e(src)}" alt="{e(caption)}" loading="lazy"></a>
           <figcaption>{e(caption)}</figcaption>
         </figure>
 """
         body += "      </div>\n"
-        credit = meta.get("photo_credit", "")
-        handle = meta.get("photo_credit_instagram", "").lstrip("@")
-        if credit:
-            if handle:
-                who = (
-                    f"{e(credit)} "
-                    f'(<a class="pk-credit" href="https://instagram.com/{e(handle)}" '
-                    f'target="_blank" rel="noopener">{IG_ICON}@{e(handle)}</a>)'
-                )
+        if credits_seen:
+            who_parts = []
+            for credit, handle in credits_seen:
+                if handle:
+                    who_parts.append(
+                        f"{e(credit)} "
+                        f'(<a class="pk-credit" href="https://instagram.com/{e(handle)}" '
+                        f'target="_blank" rel="noopener">{IG_ICON}@{e(handle)}</a>)'
+                    )
+                else:
+                    who_parts.append(e(credit))
+            if len(who_parts) == 1:
+                who = who_parts[0]
+            elif len(who_parts) == 2:
+                who = f"{who_parts[0]} and {who_parts[1]}"
             else:
-                who = e(credit)
+                who = f"{', '.join(who_parts[:-1])}, and {who_parts[-1]}"
             body += (
                 f'      <p class="pk-note">Photos by {who}. '
                 "Please credit on all published material. Click any image to download.</p>\n"
@@ -530,6 +557,24 @@ def render(doc, mode):
 
     out.append(f"""  </main>
 
+  <dialog id="photo-modal" class="pk-modal">
+    <div class="pk-modal-content">
+      <button class="pk-modal-close" aria-label="Close modal">&times;</button>
+      <div class="pk-modal-media">
+        <button class="pk-modal-nav pk-modal-nav--prev" aria-label="Previous photo">&#8249;</button>
+        <img id="pk-modal-img" src="" alt="">
+        <button class="pk-modal-nav pk-modal-nav--next" aria-label="Next photo">&#8250;</button>
+      </div>
+      <div class="pk-modal-info">
+        <div class="pk-modal-text">
+          <h3 id="pk-modal-caption" class="pk-modal-caption"></h3>
+          <p id="pk-modal-credit" class="pk-modal-credit"></p>
+        </div>
+        <a id="pk-modal-download" class="pk-btn pk-btn--primary" href="" download>Download photo</a>
+      </div>
+    </div>
+  </dialog>
+
   <footer class="pk-footer">
     <p>&copy; 2026 {e(name)}. All rights reserved.</p>
     <p><a href="{HOME[mode]}">Back to site</a></p>
@@ -542,47 +587,44 @@ def render(doc, mode):
     return "".join(out), rendered, skipped
 
 
-SCRIPT = """/* Shows are split into upcoming and past at build time, which is correct on
-   the day of the deploy. This re-checks in the browser so every page stays
-   right on later visits without a rebuild. Progressive enhancement: with the
-   script blocked, the build-time split still stands. */
+SCRIPT = """/* Shows split and photo lightbox modal functionality */
 (function () {
   var upSec = document.getElementById('upcoming');
-  if (!upSec) return;
-  var upList = upSec.querySelector('.pk-shows');
-  if (!upList) return;
-  var pastSec = document.getElementById('shows');
-  var pastList = pastSec ? pastSec.querySelector('.pk-shows') : null;
+  if (upSec) {
+    var upList = upSec.querySelector('.pk-shows');
+    var pastSec = document.getElementById('shows');
+    var pastList = pastSec ? pastSec.querySelector('.pk-shows') : null;
 
-  var today = new Date();
-  today.setHours(0, 0, 0, 0);
+    if (upList) {
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-  var stale = [];
-  Array.prototype.forEach.call(upList.children, function (li) {
-    var iso = li.getAttribute('data-date');
-    if (!iso) return;
-    var p = iso.split('-');
-    if (new Date(+p[0], +p[1] - 1, +p[2]) < today) stale.push(li);
-  });
+      var stale = [];
+      Array.prototype.forEach.call(upList.children, function (li) {
+        var iso = li.getAttribute('data-date');
+        if (!iso) return;
+        var p = iso.split('-');
+        if (new Date(+p[0], +p[1] - 1, +p[2]) < today) stale.push(li);
+      });
 
-  if (stale.length && pastList) {
-    stale.forEach(function (li) { pastList.appendChild(li); });
-    var items = Array.prototype.slice.call(pastList.children);
-    items.sort(function (a, b) {
-      var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
-      if (!da && !db) return 0;
-      if (!da) return 1;
-      if (!db) return -1;
-      return db.localeCompare(da);
-    });
-    items.forEach(function (li) { pastList.appendChild(li); });
+      if (stale.length && pastList) {
+        stale.forEach(function (li) { pastList.appendChild(li); });
+        var items = Array.prototype.slice.call(pastList.children);
+        items.sort(function (a, b) {
+          var da = a.getAttribute('data-date'), db = b.getAttribute('data-date');
+          if (!da && !db) return 0;
+          if (!da) return 1;
+          if (!db) return -1;
+          return db.localeCompare(da);
+        });
+        items.forEach(function (li) { pastList.appendChild(li); });
+      }
+
+      if (!upList.children.length) upSec.hidden = true;
+    }
   }
 
-  if (!upList.children.length) upSec.hidden = true;
-
-  /* Section numbers are baked in at build time, so renumber whatever is still
-     visible rather than leaving a gap. Both page types are covered: the press
-     kit uses .pk-section/.pk-num, the homepage .site-section/.section-num. */
+  /* Section numbers renumbering */
   var n = 0;
   Array.prototype.forEach.call(
     document.querySelectorAll('.pk-section, .site-section'), function (sec) {
@@ -592,6 +634,98 @@ SCRIPT = """/* Shows are split into upcoming and past at build time, which is co
       n += 1;
       num.textContent = n < 10 ? '0' + n : String(n);
     });
+
+  /* Photo Lightbox Modal */
+  (function () {
+    var photos = Array.prototype.slice.call(document.querySelectorAll('.pk-photo a'));
+    var modal = document.getElementById('photo-modal');
+    if (!photos.length || !modal) return;
+
+    var modalImg = document.getElementById('pk-modal-img');
+    var modalCaption = document.getElementById('pk-modal-caption');
+    var modalCredit = document.getElementById('pk-modal-credit');
+    var modalDownload = document.getElementById('pk-modal-download');
+    var closeBtn = modal.querySelector('.pk-modal-close');
+    var prevBtn = modal.querySelector('.pk-modal-nav--prev');
+    var nextBtn = modal.querySelector('.pk-modal-nav--next');
+    var currentIndex = 0;
+
+    var igIcon = '<svg class="ig-icon" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>';
+
+    function showPhoto(index) {
+      if (index < 0) index = photos.length - 1;
+      if (index >= photos.length) index = 0;
+      currentIndex = index;
+
+      var a = photos[currentIndex];
+      var href = a.getAttribute('href');
+      var caption = a.getAttribute('data-caption') || '';
+      var credit = a.getAttribute('data-credit') || '';
+      var handle = a.getAttribute('data-handle') || '';
+
+      modalImg.src = href;
+      modalImg.alt = caption;
+      modalCaption.textContent = caption;
+
+      if (credit) {
+        var creditHtml = 'Photo by ' + credit;
+        if (handle) {
+          creditHtml += ' (<a class="pk-credit" href="https://instagram.com/' + handle + '" target="_blank" rel="noopener">' + igIcon + '@' + handle + '</a>)';
+        }
+        modalCredit.innerHTML = creditHtml;
+        modalCredit.style.display = '';
+      } else {
+        modalCredit.style.display = 'none';
+      }
+
+      modalDownload.setAttribute('href', href);
+
+      if (typeof modal.showModal === 'function') {
+        if (!modal.open) modal.showModal();
+      } else {
+        modal.setAttribute('open', '');
+      }
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      if (typeof modal.close === 'function') {
+        modal.close();
+      } else {
+        modal.removeAttribute('open');
+      }
+      document.body.style.overflow = '';
+    }
+
+    photos.forEach(function (a, i) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        showPhoto(i);
+      });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeModal();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showPhoto(currentIndex - 1);
+    });
+    if (nextBtn) nextBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showPhoto(currentIndex + 1);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      var isOpen = modal.open || modal.hasAttribute('open');
+      if (!isOpen) return;
+      if (e.key === 'Escape') closeModal();
+      else if (e.key === 'ArrowLeft') showPhoto(currentIndex - 1);
+      else if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
+    });
+  })();
 })();
 """
 

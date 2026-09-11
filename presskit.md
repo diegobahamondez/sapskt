@@ -16,8 +16,8 @@
 ## Meta
 name: SAPSKT
 tagline: DJ & Music Producer
-hook: Dark groove techno from Berlin, by way of Chile. Low-slung, hypnotic, built for the long hours rather than the peaks.
-genres: Dark Groove Techno
+hook: Dark groove techno from Berlin, originally from Chile. Low-slung, hypnotic, built for the long hours rather than the peaks.
+genres: Techno, Hard groove
 city: Berlin, Germany
 origin: Chile
 booking_email: diego.bahamondezm@gmail.com
@@ -41,9 +41,9 @@ Fake Dichotomy | 2319999095 | Track | compact | Listen on SoundCloud > https://s
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
 SAPSKT is a Chilean DJ and producer based in Berlin, working primarily in dark
 groove techno: low-slung, hypnotic, and built for the long stretches of a night
-rather than its obvious peaks. He also plays reggaeton at its dirtiest, and treats
-the distance between the two as smaller than most people assume. He works on both
-digital and vinyl, adapting to the room rather than to the booth.
+rather than its obvious peaks. He also plays reggaeton at its dirtiest, showing
+careful, soulful selections regardless of the genre. He works on both digital and
+vinyl, adapting to the room rather than to the booth.
 
 ## Bio full
 <!-- DRAFT — written from the facts provided; replace with your own words. -->
@@ -168,8 +168,11 @@ Cyberperreo | 1344712147 | Mixset | visual | Listen on SoundCloud > https://soun
 - TODO: hospitality and travel requirements
 
 ## Press photos
-<!-- file | caption -->
-assets/profile.jpeg | Portrait
-assets/dj-from-behind.jpeg | Behind the decks
-assets/dj-trippy.jpeg | Visuals
-assets/vinyl-collection.jpeg | Vinyl selection
+<!-- file | caption | credit | instagram -->
+assets/profile.jpeg | Portrait | Manuela Selman | lafrau.s
+assets/dj-from-behind.jpeg | Behind the decks | Manuela Selman | lafrau.s
+assets/dj-trippy.jpeg | Visuals | Manuela Selman | lafrau.s
+assets/vinyl-collection.jpeg | Vinyl selection | Manuela Selman | lafrau.s
+assets/dj front at zum genossen.jpeg | Live at Zum Genossen | Marius Basse | moschi_photography
+assets/dj side at zum genossen BW.jpeg | Live at Zum Genossen (B&W) | Marius Basse | moschi_photography
+
